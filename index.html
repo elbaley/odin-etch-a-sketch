@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Odin | Etch a Sketch</title>
+    <link rel="stylesheet" href="style.css" />
+    <script defer src="./app.js"></script>
+  </head>
+  <body>
+    <main>
+      <section id="title">
+        <h2>Etch-a Sketch</h2>
+      </section>
+      <!-- Sketchpad -->
+      <div class="container">
+        <section id="controlpanel">
+          <label for="points">Grid Size</label>
+          <span class="gridSizeText">24*24</span>
+          <input
+            type="range"
+            id="gridSize"
+            value="24"
+            name="points"
+            min="1"
+            max="60"
+          />
+          <button class="eraser btn">Eraser</button>
+          <button class="color btn">Color</button>
+          <button class="shade btn">Shade</button>
+          <button class="clear btn">Clear</button>
+          <div>
+            Color: <input id="selectedColor" value="#000000" type="color" />
+          </div>
+        </section>
+        <section id="sketchpad"></section>
+      </div>
+    </main>
+  </body>
+</html>
