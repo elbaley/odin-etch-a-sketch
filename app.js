@@ -17,18 +17,6 @@ let GRIDSIZE = 24;
 const CONTAINERWIDTH = 600;
 const CONTAINERHEIGHT = 600;
 const TOTALSQUARES = GRIDSIZE * GRIDSIZE;
-const colorShades = [
-  "rgb(230, 230, 230)",
-  "rgb(204, 204, 204)",
-  "rgb(179, 179, 179)",
-  "rgb(153, 153, 153)",
-  "rgb(128, 128, 128)",
-  "rgb(102, 102, 102)",
-  "rgb(76, 76, 76)",
-  "rgb(51, 51, 51)",
-  "rgb(25, 25, 25)",
-  "rgb(0, 0, 0)",
-];
 
 let currentMode = "color";
 let isDragging = false;
@@ -58,9 +46,48 @@ shadeButton.addEventListener("click", () => {
   changeMode("shade");
 });
 clearButton.addEventListener("click", () => {
-  removeGrid(sketchpad);
-  createGrid(gridSizeInput.value);
+  if (confirm("Are you sure?")) {
+    removeGrid(sketchpad);
+    createGrid(gridSizeInput.value);
+  }
 });
+
+// const newShade = (hexColor, magnitude) => {
+//   hexColor = hexColor.replace(`#`, ``);
+//   if (hexColor.length === 6) {
+//     const decimalColor = parseInt(hexColor, 16);
+//     let r = (decimalColor >> 16) + magnitude;
+//     r > 255 && (r = 255);
+//     r < 0 && (r = 0);
+//     let g = (decimalColor & 0x0000ff) + magnitude;
+//     g > 255 && (g = 255);
+//     g < 0 && (g = 0);
+//     let b = ((decimalColor >> 8) & 0x00ff) + magnitude;
+//     b > 255 && (b = 255);
+//     b < 0 && (b = 0);
+//     return `#${(g | (b << 8) | (r << 16)).toString(16)}`;
+//   } else {
+//     return hexColor;
+//   }
+// };
+const subtractLight = function (color, amount) {
+  let cc = parseInt(color, 16) - amount;
+  let c = cc < 0 ? 0 : cc;
+  c = c.toString(16).length > 1 ? c.toString(16) : `0${c.toString(16)}`;
+  return c;
+};
+
+const darken = (color, amount = 10) => {
+  color = color.indexOf("#") >= 0 ? color.substring(1, color.length) : color;
+  amount = parseInt((255 * amount) / 100);
+  return (color = `#${subtractLight(
+    color.substring(0, 2),
+    amount
+  )}${subtractLight(color.substring(2, 4), amount)}${subtractLight(
+    color.substring(4, 6),
+    amount
+  )}`);
+};
 
 function changeColor(e) {
   if (e.type === "mouseover" && !isDragging) return;
@@ -75,11 +102,17 @@ function changeColor(e) {
       e.target.style.border = "none";
       break;
     case "shade":
-      console.log(`this is shade color ${e.target}`);
+      console.log(`this is shade color ${e.target.style.backgroundColor}`);
       console.log(e.target);
-      e.target.style.backgroundColor = selectShade(
-        e.target.style.backgroundColor,
-        colorShades
+      e.target.style.backgroundColor = darken(
+        e.target.style.backgroundColor === "rgb(255, 255, 255)"
+          ? colorInput.value
+          : "#" +
+              e.target.style.backgroundColor
+                .slice(4, -1)
+                .split(",")
+                .map((x) => (+x).toString(16).padStart(2, 0))
+                .join("")
       );
       e.target.style.border = "none";
       break;
@@ -112,22 +145,6 @@ function changeMode(mode) {
   }
 }
 
-function selectShade(currentColor, colorShades) {
-  console.log("currentColor", currentColor);
-  // if current color is not in the shadeColor list return the first shade
-  if (!colorShades.includes(currentColor)) return colorShades[0];
-  // otherwise return the next shade
-  const currentColorIndex = colorShades.indexOf(currentColor);
-  if (currentColorIndex != colorShades.length - 1) {
-    console.log(`Returning : ${colorShades[currentColorIndex + 1]}`);
-    return colorShades[currentColorIndex + 1];
-  }
-  //if currentColor is the last color shade return it as it is
-  console.log(`Returning : ${currentColor}`);
-
-  return currentColor;
-}
-
 function createGrid(gridSize) {
   //create grid
   for (let i = 0; i < gridSize * gridSize; i++) {
@@ -135,7 +152,7 @@ function createGrid(gridSize) {
     //style the square
     square.style.width = `${CONTAINERWIDTH / gridSize}px`;
     square.style.height = `${CONTAINERHEIGHT / gridSize}px`;
-    square.style.backgroundColor = "rgb(255, 255, 255)";
+    square.style.backgroundColor = "#ffffff";
 
     square.addEventListener("mousedown", changeColor);
     square.addEventListener("mouseover", changeColor);
