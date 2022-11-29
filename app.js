@@ -11,12 +11,8 @@ const colorInput = document.querySelector("#selectedColor"),
 
 const gridSizeText = document.querySelector(".gridSizeText");
 
-console.log(`Grid sizein su anki degeri budur: ${gridSizeInput.value}`);
-
-let GRIDSIZE = 24;
 const CONTAINERWIDTH = 600;
 const CONTAINERHEIGHT = 600;
-const TOTALSQUARES = GRIDSIZE * GRIDSIZE;
 
 let currentMode = "color";
 let isDragging = false;
@@ -52,24 +48,6 @@ clearButton.addEventListener("click", () => {
   }
 });
 
-// const newShade = (hexColor, magnitude) => {
-//   hexColor = hexColor.replace(`#`, ``);
-//   if (hexColor.length === 6) {
-//     const decimalColor = parseInt(hexColor, 16);
-//     let r = (decimalColor >> 16) + magnitude;
-//     r > 255 && (r = 255);
-//     r < 0 && (r = 0);
-//     let g = (decimalColor & 0x0000ff) + magnitude;
-//     g > 255 && (g = 255);
-//     g < 0 && (g = 0);
-//     let b = ((decimalColor >> 8) & 0x00ff) + magnitude;
-//     b > 255 && (b = 255);
-//     b < 0 && (b = 0);
-//     return `#${(g | (b << 8) | (r << 16)).toString(16)}`;
-//   } else {
-//     return hexColor;
-//   }
-// };
 const subtractLight = function (color, amount) {
   let cc = parseInt(color, 16) - amount;
   let c = cc < 0 ? 0 : cc;
@@ -102,8 +80,7 @@ function changeColor(e) {
       e.target.style.border = "none";
       break;
     case "shade":
-      console.log(`this is shade color ${e.target.style.backgroundColor}`);
-      console.log(e.target);
+      // change current color to darker color by converting rgb to hex
       e.target.style.backgroundColor = darken(
         e.target.style.backgroundColor === "rgb(255, 255, 255)"
           ? colorInput.value
@@ -124,7 +101,6 @@ function changeColor(e) {
 function changeMode(mode) {
   currentMode = mode;
   //remove active class from all buttons
-  console.log(eraserButton.classList);
   eraserButton.classList.remove("active");
   colorButton.classList.remove("active");
   shadeButton.classList.remove("active");
@@ -153,12 +129,9 @@ function createGrid(gridSize) {
     square.style.width = `${CONTAINERWIDTH / gridSize}px`;
     square.style.height = `${CONTAINERHEIGHT / gridSize}px`;
     square.style.backgroundColor = "#ffffff";
-
     square.addEventListener("mousedown", changeColor);
     square.addEventListener("mouseover", changeColor);
-
     square.classList.add("pixel");
-
     sketchpad.appendChild(square);
   }
 }
